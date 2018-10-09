@@ -52,7 +52,7 @@ class SubModelValidator extends Validator
             return;
         }
 
-        $object = Yii::createObject($this->class);
+        $object = Yii::createObject(['class' => $this->class]);
 
         if (!$object->load($value, '') || !$object->validate()) {
             $this->addError($model, $attribute, $this->message, []);
@@ -74,7 +74,7 @@ class SubModelValidator extends Validator
             return [$this->message, []];
         }
 
-        $object = Yii::createObject($this->class);
+        $object = Yii::createObject(['class' => $this->class]);
 
         if (!$object->load($value, '') || !$object->validate()) {
             return [reset(reset($object->errors)), []];
