@@ -37,6 +37,32 @@ class SubModelValidator extends Validator
     }
 
     /**
+     * @param Model  $model
+     * @param string $attribute
+     *
+     * @return array|void
+     * @throws
+     */
+    public function validateAttribute($model, $attribute)
+    {
+        $value = $model->$attribute;
+
+        if (($this->strictObject && !is_object($value)) || (!$this->strictObject && !is_object($value) && !is_array($value) && !($value instanceof \ArrayAccess))) {
+            $this->addError($model, $attribute, $this->message, []);
+            return;
+        }
+
+        $object = Yii::createObject($this->class);
+
+        if (!$object->load($value, '') || !$object->validate()) {
+            $this->addError($model, $attribute, $this->message, []);
+            return;
+        }
+
+        $model->$attribute = $object;
+    }
+
+    /**
      * @param mixed $value
      *
      * @return array|null
@@ -48,10 +74,10 @@ class SubModelValidator extends Validator
             return [$this->message, []];
         }
 
-        $model = Yii::createObject($this->class);
+        $object = Yii::createObject($this->class);
 
-        if (!$model->load($value, '') || !$model->validate()) {
-            return [reset(reset($model->errors)), []];
+        if (!$object->load($value, '') || !$object->validate()) {
+            return [reset(reset($object->errors)), []];
         }
 
         return null;
