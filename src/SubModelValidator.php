@@ -9,7 +9,7 @@ use yii\validators\Validator;
  * Class SubModelValidator
  * @package matrozov\yii2subModelValidator
  *
- * @property Model $class
+ * @property Model $model
  * @property boolean $strictObject
  */
 class SubModelValidator extends Validator
@@ -17,7 +17,7 @@ class SubModelValidator extends Validator
     /**
      * @var Model
      */
-    public $class;
+    public $model;
 
     /**
      * @var bool
@@ -52,7 +52,7 @@ class SubModelValidator extends Validator
             return;
         }
 
-        $object = Yii::createObject(['class' => $this->class]);
+        $object = Yii::createObject(['class' => $this->model]);
 
         if (!$object->load($value, '') || !$object->validate()) {
             $this->addError($model, $attribute, $this->message, []);
@@ -74,7 +74,7 @@ class SubModelValidator extends Validator
             return [$this->message, []];
         }
 
-        $object = Yii::createObject(['class' => $this->class]);
+        $object = Yii::createObject(['class' => $this->model]);
 
         if (!$object->load($value, '') || !$object->validate()) {
             return [reset(reset($object->errors)), []];
