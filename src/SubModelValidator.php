@@ -14,6 +14,8 @@ use yii\validators\Validator;
  */
 class SubModelValidator extends Validator
 {
+    const SEPARATOR = '->';
+
     /**
      * @var Model
      */
@@ -52,10 +54,21 @@ class SubModelValidator extends Validator
             return;
         }
 
+        /** @var Model $object */
         $object = Yii::createObject(['class' => $this->model]);
 
         if (!$object->load($value, '') || !$object->validate()) {
-            $this->addError($model, $attribute, $this->message, []);
+            if ($object->hasErrors()) {
+                foreach ($object->errors as $field => $errors) {
+                    foreach ($errors as $error) {
+                        $model->addError($attribute . self::SEPARATOR . $field, $error);
+                    }
+                }
+            }
+            else {
+                $this->addError($model, $attribute, $this->message, []);
+            }
+
             return;
         }
 
@@ -74,6 +87,7 @@ class SubModelValidator extends Validator
             return [$this->message, []];
         }
 
+        /** @var Model $object */
         $object = Yii::createObject(['class' => $this->model]);
 
         if (!$object->load($value, '') || !$object->validate()) {
